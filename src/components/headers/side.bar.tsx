@@ -110,9 +110,14 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 					<SidebarMenu>
 						<SidebarMenuItem className='flex justify-center'>
 							<SignedOut>
-								<SidebarMenuButton>
-									<SignInButton />
-								</SidebarMenuButton>
+								<SignInButton>
+									<SidebarMenuButton
+										size='lg'
+										className='flex justify-center text-xl'
+									>
+										Sign in
+									</SidebarMenuButton>
+								</SignInButton>
 							</SignedOut>
 							<SignedIn>
 								<UserButton showName />
