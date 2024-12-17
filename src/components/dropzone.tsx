@@ -7,20 +7,26 @@ import { useDropzone } from 'react-dropzone'
 export default function FileDropZone() {
 	const { toast } = useToast()
 
-	const onFileUpload = (files: File[]) => {
-		toast({
-			title: 'Success',
-			description: 'File was successfuly uploaded.',
-		})
-		console.log('Uploaded files:', files)
-	}
+	const onFileUpload = useCallback(
+		(file: File[]) => {
+			toast({
+				title: 'Success',
+				description: 'File was successfuly uploaded.',
+			})
+			console.log('Uploaded files:', file)
+		},
+		[toast]
+	)
 
 	const onDrop = useCallback(
-		(acceptedFiles: File[], fileRejections: any[]) => {
+		(
+			acceptedFiles: File[],
+			fileRejections: import('react-dropzone').FileRejection[]
+		) => {
 			// Проверка на ошибки
 			if (fileRejections.length > 0) {
 				fileRejections.forEach(file => {
-					file.errors.forEach((err: any) => {
+					file.errors.forEach((err: { code: string; message: string }) => {
 						if (err.code === 'file-too-large') {
 							toast({
 								title: 'File is too large',

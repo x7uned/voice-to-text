@@ -26,7 +26,6 @@ export default async function handler(
 	const { id, email_addresses } = req.body
 
 	try {
-		// Сохраняем нового пользователя в БД
 		await prisma.user.create({
 			data: {
 				clerkId: id,
