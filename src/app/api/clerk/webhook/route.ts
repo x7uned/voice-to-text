@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import crypto from 'crypto'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -26,12 +26,14 @@ export default async function handler(
 	const { id, email_addresses } = req.body
 
 	try {
-		await prisma.user.create({
+		const fetch = await prisma.user.create({
 			data: {
 				clerkId: id,
-				email: email_addresses[0].email_address, // Основной email пользователя
+				email: email_addresses[0].email_address,
 			},
 		})
+
+		console.log(fetch)
 
 		return res.status(200).json({ message: 'User saved successfully' })
 	} catch (error) {
