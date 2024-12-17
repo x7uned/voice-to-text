@@ -26,6 +26,16 @@ export default async function handler(
 	const { id, email_addresses } = req.body
 
 	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				clerkId: id,
+			},
+		})
+
+		if (user) {
+			return res.status(200).json({ message: 'User already exists' })
+		}
+
 		const fetch = await prisma.user.create({
 			data: {
 				clerkId: id,
