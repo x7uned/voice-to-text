@@ -1,31 +1,28 @@
 import prisma from '@/lib/prisma'
 import crypto from 'crypto'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 
 const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET!
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse
-) {
-	if (req.method !== 'POST') {
-		return res.status(405).json({ message: 'Method Not Allowed' })
-	}
-
-	const signature = req.headers['clerk-signature'] as string
-	const payload = JSON.stringify(req.body)
-	const hash = crypto
-		.createHmac('sha256', CLERK_WEBHOOK_SECRET)
-		.update(payload, 'utf8')
-		.digest('base64')
-
-	if (signature !== hash) {
-		return res.status(403).json({ message: 'Invalid signature' })
-	}
-
-	const { id, email_addresses } = req.body
-
+export async function POST(req: NextRequest) {
 	try {
+		const signature = req.headers.get('clerk-signature')
+		const payload = await req.text()
+
+		const hash = crypto
+			.createHmac('sha256', CLERK_WEBHOOK_SECRET)
+			.update(payload, 'utf8')
+			.digest('base64')
+
+		if (signature !== hash) {
+			return NextResponse.json(
+				{ message: 'Invalid signature' },
+				{ status: 403 }
+			)
+		}
+
+		const { id, email_addresses } = JSON.parse(payload)
+
 		const user = await prisma.user.findUnique({
 			where: {
 				clerkId: id,
@@ -33,21 +30,30 @@ export default async function handler(
 		})
 
 		if (user) {
-			return res.status(200).json({ message: 'User already exists' })
+			return NextResponse.json(
+				{ message: 'User already exists' },
+				{ status: 200 }
+			)
 		}
 
-		const fetch = await prisma.user.create({
+		const newUser = await prisma.user.create({
 			data: {
 				clerkId: id,
 				email: email_addresses[0].email_address,
 			},
 		})
 
-		console.log(fetch)
+		console.log(newUser)
 
-		return res.status(200).json({ message: 'User saved successfully' })
+		return NextResponse.json(
+			{ message: 'User saved successfully' },
+			{ status: 200 }
+		)
 	} catch (error) {
 		console.error('Error saving user:', error)
-		return res.status(500).json({ message: 'Internal Server Error' })
+		return NextResponse.json(
+			{ message: 'Internal Server Error' },
+			{ status: 500 }
+		)
 	}
 }
