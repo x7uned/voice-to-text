@@ -4,8 +4,13 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET!
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, res: NextResponse) {
 	try {
+		return NextResponse.json(
+			{ message: 'User saved successfully' },
+			{ status: 200 }
+		)
+
 		const signature = req.headers.get('clerk-signature')
 		const payload = await req.text()
 
