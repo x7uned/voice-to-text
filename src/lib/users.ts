@@ -11,15 +11,19 @@ export async function createUser(data: User) {
 }
 
 export async function deleteUser(id: string) {
-	throw new Error(`Not implemented ${id}`)
-	// try {
-	// 	const fetch = await prisma.user.delete({ where: { clerkId: id } })
-	// 	if (!fetch.id) {
-	// 		throw new Error('User not found')
-	// 	}
-	// } catch (error) {
-	// 	throw new Error('Something went wrong')
-	// }
+	try {
+		const user = await prisma.user.findUnique({ where: { clerkId: id } })
+
+		if (!user) {
+			throw new Error('User not found')
+		}
+
+		console.log('Deleting user:', user.id)
+		const fetch = await prisma.user.delete({ where: { id: user.id } })
+		console.log(fetch)
+	} catch (error) {
+		throw new Error('Something went wrong')
+	}
 }
 
 export async function getUserById({
