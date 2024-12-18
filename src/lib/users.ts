@@ -15,14 +15,26 @@ export async function deleteUser(id: string) {
 		const user = await prisma.user.findUnique({ where: { clerkId: id } })
 
 		if (!user) {
-			throw new Error('User not found')
+			throw new Response('User not found', {
+				status: 404,
+			})
 		}
 
 		console.log('Deleting user:', user.id)
 		const fetch = await prisma.user.delete({ where: { id: user.id } })
-		console.log(fetch)
+		if (fetch.id === user.id) {
+			return new Response(`User ${id}`, {
+				status: 200,
+			})
+		} else {
+			throw new Response('Error deleting user id', {
+				status: 400,
+			})
+		}
 	} catch (error) {
-		throw new Error('Something went wrong')
+		throw new Response('Error deleting user', {
+			status: 400,
+		})
 	}
 }
 
