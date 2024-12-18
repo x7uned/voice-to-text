@@ -20,33 +20,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRecords } from '../contexts/records.context'
 
-const testChats = [
-	{
-		title: 'Test chat 1',
-		url: '/chat/1',
-	},
-	{
-		title: 'Test chat 2',
-		url: '/chat/2',
-	},
-	{
-		title: 'Test chat 3',
-		url: '/chat/3',
-	},
-	{
-		title: 'Test chat 4',
-		url: '/chat/4',
-	},
-	{
-		title: 'Test chat 5',
-		url: '/chat/5',
-	},
-	{
-		title: 'Test chat 6',
-		url: '/chat/6',
-	},
-]
-
 const items = [
 	{
 		title: 'Create new chat',
@@ -81,7 +54,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 	}
 
 	useEffect(() => {
-		fetchRecords()
+		fetchingRecords()
 	}, [])
 
 	return (
@@ -113,16 +86,20 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{records.map(item => (
-									<SidebarMenuItem key={item.id}>
-										<SidebarMenuButton asChild>
-											<Link href={`/record/${item.id}`}>
-												<Diamond />
-												<span>{item.text.slice(0, 25)}</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								))}
+								{loading ? (
+									<SidebarMenuButton>Loading...</SidebarMenuButton>
+								) : (
+									records.map(item => (
+										<SidebarMenuItem key={item.id}>
+											<SidebarMenuButton asChild>
+												<Link href={`/record/${item.id}`}>
+													<Diamond />
+													<span>{item.text.slice(0, 40)}</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									))
+								)}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
