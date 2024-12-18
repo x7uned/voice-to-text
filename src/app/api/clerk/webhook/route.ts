@@ -68,7 +68,12 @@ export async function POST(req: Request) {
 				status: 400,
 			})
 		}
-		await deleteUser(id)
+		const fetch = await deleteUser(id)
+		if (!fetch) {
+			return new Response('Error occurred -- user not found', {
+				status: 404,
+			})
+		}
 	}
 	return new Response('', { status: 200 })
 }

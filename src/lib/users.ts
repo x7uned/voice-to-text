@@ -12,7 +12,7 @@ export async function createUser(data: User) {
 
 export async function deleteUser(id: string) {
 	try {
-		const fetch = await prisma.user.delete({ where: { id } })
+		const fetch = await prisma.user.delete({ where: { clerkId: id } })
 		if (!fetch) {
 			throw new Error('User not found')
 		}
