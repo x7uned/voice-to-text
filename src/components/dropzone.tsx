@@ -1,23 +1,56 @@
 'use client'
 
 import { useToast } from '@/hooks/use-toast'
+import axios from 'axios'
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 export default function FileDropZone() {
 	const { toast } = useToast()
 
+	// Обработка загрузки файла
 	const onFileUpload = useCallback(
-		(file: File[]) => {
-			toast({
-				title: 'Success',
-				description: 'File was successfuly uploaded.',
-			})
-			console.log('Uploaded files:', file)
+		async (file: File) => {
+			try {
+				// Создание FormData для отправки файла
+				const formData = new FormData()
+				formData.append('file', file)
+
+				const response = await axios.post('/api/upload/audio', formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				})
+
+				console.log(response)
+
+				if (response.status === 200) {
+					toast({
+						title: 'Success',
+						description: `File was successfully uploaded: ${response.data.fileUrl}`,
+					})
+				} else {
+					const error =
+						response.data.error || new Error('Failed to upload file')
+					toast({
+						title: 'Upload error',
+						description: error.message || 'Something went wrong.',
+						variant: 'destructive',
+					})
+				}
+			} catch (error) {
+				console.error(error)
+				toast({
+					title: 'Upload error',
+					description: 'Unable to upload file. Please try again later.',
+					variant: 'destructive',
+				})
+			}
 		},
 		[toast]
 	)
 
+	// Обработка файла при перетаскивании
 	const onDrop = useCallback(
 		(
 			acceptedFiles: File[],
@@ -30,7 +63,7 @@ export default function FileDropZone() {
 						if (err.code === 'file-too-large') {
 							toast({
 								title: 'File is too large',
-								description: 'The maximum file size is 25MB.',
+								description: 'The maximum file size is 5MB.',
 								variant: 'destructive',
 							})
 						} else if (err.code === 'file-invalid-type') {
@@ -48,13 +81,15 @@ export default function FileDropZone() {
 						}
 					})
 				})
-			} else {
-				onFileUpload(acceptedFiles)
+			} else if (acceptedFiles.length === 1) {
+				// Отправка только одного файла
+				onFileUpload(acceptedFiles[0])
 			}
 		},
 		[onFileUpload, toast]
 	)
 
+	// Настройка useDropzone
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
 		accept: {
@@ -62,9 +97,11 @@ export default function FileDropZone() {
 			'audio/wav': ['.wav'],
 			'audio/x-m4a': ['.m4a'],
 		},
-		maxSize: 25 * 1024 * 1024, // Ограничение на 25MB
+		maxSize: 5 * 1024 * 1024, // Ограничение на 5MB
+		multiple: false, // Убираем поддержку нескольких файлов
 	})
 
+	// Рендер компонента
 	return (
 		<div
 			{...getRootProps()}
@@ -77,7 +114,7 @@ export default function FileDropZone() {
 				<>
 					<p>Drag and drop an audio file here, or click to select</p>
 					<p className='text-sm text-gray-400'>
-						Supported formats: MP3, WAV, M4A (max 25MB)
+						Supported formats: MP3, WAV, M4A (max 5MB)
 					</p>
 				</>
 			)}
