@@ -88,7 +88,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 						</SidebarGroupContent>
 					</SidebarGroup>
 					<SidebarGroup>
-						<SidebarGroupLabel>Chats</SidebarGroupLabel>
+						<SidebarGroupLabel>Records</SidebarGroupLabel>
 
 						<SidebarGroupContent>
 							<SidebarMenu>

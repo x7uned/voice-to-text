@@ -16,11 +16,14 @@ model User {
 }
 
 model Record {
-  id        String   @id @default(cuid())
-  userId    String
-  content   String
-  createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id])
+  id         String   @id @default(cuid())
+  userId     String
+  text       String
+  duration   Int
+  words      Int
+  uploadLink String
+  createdAt  DateTime @default(now())
+  User       User     @relation(fields: [userId], references: [id])
 }
 
 model Payment {

@@ -23,12 +23,9 @@ export async function deleteUser(id: string) {
 			throw new Error('User not found')
 		}
 
-		console.log('Deleting user:', user.id)
-
 		// Удаление пользователя по ID
 		await prisma.user.delete({ where: { id: user.id } })
 
-		console.log(`User ${id} deleted successfully`)
 		return { success: true }
 	} catch (error) {
 		console.error('Error deleting user:', error)

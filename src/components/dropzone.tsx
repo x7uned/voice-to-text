@@ -1,18 +1,31 @@
 'use client'
 
 import { useToast } from '@/hooks/use-toast'
+import { transcribe } from '@/lib/transcribe'
 import axios from 'axios'
-import { useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import Transcribe from './transcribe'
+
+interface ResultOfTranscription {
+	text: string
+	words?: number
+	duration?: number | null
+}
 
 export default function FileDropZone() {
 	const { toast } = useToast()
+	const router = useRouter()
+	const [loading, setLoading] = useState(false)
+	const [transcript, setTranscript] = useState<ResultOfTranscription | null>(
+		null
+	)
 
-	// Обработка загрузки файла
 	const onFileUpload = useCallback(
 		async (file: File) => {
 			try {
-				// Создание FormData для отправки файла
+				setLoading(true)
 				const formData = new FormData()
 				formData.append('file', file)
 
@@ -22,13 +35,12 @@ export default function FileDropZone() {
 					},
 				})
 
-				console.log(response)
-
 				if (response.data.blob.url) {
-					toast({
-						title: 'Success',
-						description: `File was successfully uploaded`,
-					})
+					const fetch = await transcribe(response.data.blob.url)
+					console.log(fetch)
+					if (fetch?.success) {
+						router.push(`/record/${fetch.id}`)
+					}
 				} else {
 					const error =
 						response.data.error || new Error('Failed to upload file')
@@ -38,7 +50,9 @@ export default function FileDropZone() {
 						variant: 'destructive',
 					})
 				}
+				setLoading(false)
 			} catch (error) {
+				setLoading(false)
 				console.error(error)
 				toast({
 					title: 'Upload error',
@@ -97,25 +111,43 @@ export default function FileDropZone() {
 			'audio/wav': ['.wav'],
 			'audio/x-m4a': ['.m4a'],
 		},
-		maxSize: 5 * 1024 * 1024, // Ограничение на 5MB
-		multiple: false, // Убираем поддержку нескольких файлов
+		maxSize: 5 * 1024 * 1024,
+		multiple: false,
 	})
 
-	// Рендер компонента
+	if (transcript) {
+		return (
+			<Transcribe
+				words={transcript.words}
+				text={transcript.text}
+				duration={transcript.duration}
+			/>
+		)
+	}
+
 	return (
 		<div
 			{...getRootProps()}
 			className='border-2 border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-500 cursor-pointer hover:border-gray-400'
 		>
 			<input {...getInputProps()} />
-			{isDragActive ? (
-				<p className='text-gray-600'>Drop the audio file here...</p>
+			{loading ? (
+				<p>Loading...</p>
+			) : transcript ? (
+				<p>{transcript}</p>
 			) : (
 				<>
-					<p>Drag and drop an audio file here, or click to select</p>
-					<p className='text-sm text-gray-400'>
-						Supported formats: MP3, WAV, M4A (max 5MB)
-					</p>
+					{isDragActive ? (
+						<p className='text-gray-600'>Drop the audio file here...</p>
+					) : (
+						<>
+							<p>Drag and drop an audio file here, or click to select</p>
+							<p className='text-sm text-gray-400'>
+								Supported formats: MP3, WAV, M4A (max 5MB)
+							</p>
+							<p className='text-sm text-gray-400'>ONLY ENGLISH LANGUAGE</p>
+						</>
+					)}
 				</>
 			)}
 		</div>
