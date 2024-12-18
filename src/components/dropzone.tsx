@@ -22,12 +22,10 @@ export default function FileDropZone() {
 					},
 				})
 
-				console.log(response)
-
-				if (response.status === 200) {
+				if (response.data.url) {
 					toast({
 						title: 'Success',
-						description: `File was successfully uploaded: ${response.data.fileUrl}`,
+						description: `File was successfully uploaded: ${response.data.url}`,
 					})
 				} else {
 					const error =
