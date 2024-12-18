@@ -1,54 +1,44 @@
-import prisma from '@/lib/prisma'
-import crypto from 'crypto'
+import { auth, currentUser } from '@clerk/nextjs/server'
+import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET!
 
+const prisma = new PrismaClient()
+
 export async function POST(req: NextRequest) {
 	try {
-		const signature = req.headers.get('clerk-signature')
-		const payload = await req.text()
+		const { userId } = await auth()
 
-		const hash = crypto
-			.createHmac('sha256', CLERK_WEBHOOK_SECRET)
-			.update(payload, 'utf8')
-			.digest('base64')
-
-		if (signature !== hash) {
-			return NextResponse.json(
-				{ message: 'Invalid signature' },
-				{ status: 403 }
-			)
+		if (!userId) {
+			return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
 		}
 
-		const { id, email_addresses } = JSON.parse(payload)
+		const user = await currentUser()
 
-		const user = await prisma.user.findUnique({
+		if (!user) {
+			return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+		}
+
+		let dbUser = await prisma.user.findUnique({
 			where: {
-				clerkId: id,
+				clerkId: user.id,
 			},
 		})
 
-		if (user) {
-			return NextResponse.json(
-				{ message: 'User already exists' },
-				{ status: 200 }
-			)
+		if (!dbUser) {
+			dbUser = await prisma.user.create({
+				data: {
+					clerkId: user.id,
+					email: user.emailAddresses[0].emailAddress ?? '',
+				},
+			})
 		}
 
-		const newUser = await prisma.user.create({
-			data: {
-				clerkId: id,
-				email: email_addresses[0].email_address,
-			},
+		return new NextResponse(null, {
+			status: 302,
+			headers: { Location: 'https://voice-to-text-five.vercel.app/' },
 		})
-
-		console.log(newUser)
-
-		return NextResponse.json(
-			{ message: 'User saved successfully' },
-			{ status: 200 }
-		)
 	} catch (error) {
 		console.error('Error saving user:', error)
 		return NextResponse.json(
