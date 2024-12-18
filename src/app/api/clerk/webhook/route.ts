@@ -62,13 +62,19 @@ export async function POST(req: Request) {
 
 		await createUser(user as User)
 	} else if (eventType === 'user.deleted') {
-		const { id } = evt.data
-		if (!id) {
-			return new Response('Error occurred -- missing data', {
+		try {
+			const { id } = evt.data
+			if (!id) {
+				return new Response('Error occurred -- missing data', {
+					status: 400,
+				})
+			}
+			await deleteUser(id)
+		} catch (error) {
+			return new Response('Error deleting user', {
 				status: 400,
 			})
 		}
-		await deleteUser(id)
 	}
 	return new Response('Successfuly', { status: 200 })
 }

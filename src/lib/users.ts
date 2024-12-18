@@ -12,29 +12,27 @@ export async function createUser(data: User) {
 
 export async function deleteUser(id: string) {
 	try {
+		if (!id) {
+			throw new Error('User ID is required')
+		}
+
+		// Поиск пользователя по clerkId
 		const user = await prisma.user.findUnique({ where: { clerkId: id } })
 
 		if (!user) {
-			throw new Response('User not found', {
-				status: 404,
-			})
+			throw new Error('User not found')
 		}
 
 		console.log('Deleting user:', user.id)
-		const fetch = await prisma.user.delete({ where: { id: user.id } })
-		if (fetch.id === user.id) {
-			return new Response(`User ${id}`, {
-				status: 200,
-			})
-		} else {
-			throw new Response('Error deleting user id', {
-				status: 400,
-			})
-		}
+
+		// Удаление пользователя по ID
+		await prisma.user.delete({ where: { id: user.id } })
+
+		console.log(`User ${id} deleted successfully`)
+		return { success: true }
 	} catch (error) {
-		throw new Response('Error deleting user', {
-			status: 400,
-		})
+		console.error('Error deleting user:', error)
+		throw new Error(`Failed to delete user: ${id}`)
 	}
 }
 
