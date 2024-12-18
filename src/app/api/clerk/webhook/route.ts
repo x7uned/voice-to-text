@@ -71,7 +71,8 @@ export async function POST(req: Request) {
 			}
 			await deleteUser(id)
 		} catch (error) {
-			return new Response('Error deleting user', {
+			console.error('Error deleting user:', error)
+			return new Response('Error occurred', {
 				status: 400,
 			})
 		}
