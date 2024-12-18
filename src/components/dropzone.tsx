@@ -27,7 +27,7 @@ export default function FileDropZone() {
 					const fetch = await transcribe(response.data.blob.url)
 					console.log(fetch)
 					if (fetch?.success) {
-						router.push(`/record/${fetch}`)
+						router.push(`/record/${fetch.id}`)
 					}
 				} else {
 					const error =
@@ -106,7 +106,7 @@ export default function FileDropZone() {
 			{...getRootProps()}
 			className='border-2 border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-500 cursor-pointer hover:border-gray-400'
 		>
-			<input {...getInputProps()} />(
+			<input {...getInputProps()} />
 			<>
 				{isDragActive ? (
 					<p className='text-gray-600'>Drop the audio file here...</p>
@@ -120,7 +120,6 @@ export default function FileDropZone() {
 					</>
 				)}
 			</>
-			)
 		</div>
 	)
 }

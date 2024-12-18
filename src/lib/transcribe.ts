@@ -2,6 +2,7 @@
 
 import { currentUser } from '@clerk/nextjs/server'
 import { AssemblyAI } from 'assemblyai'
+import { createRecord } from './records'
 
 export const transcribe = async (audioUrl: string) => {
 	try {
@@ -23,8 +24,6 @@ export const transcribe = async (audioUrl: string) => {
 			audio: audioUrl,
 		}
 
-		console.log('sdsd')
-
 		const transcript = await client.transcripts.transcribe(data)
 
 		if (!transcript.text) {
@@ -32,18 +31,17 @@ export const transcribe = async (audioUrl: string) => {
 		}
 
 		if (transcript.status === 'completed') {
-			// const data = {
-			// 	id: crypto.randomUUID(),
-			// 	userId: user?.id,
-			// 	content: transcript.text || '',
-			// 	createdAt: new Date(),
-			// 	words: transcript.words ? transcript.words.length : 0,
-			// 	duration: transcript.audio_duration || 0,
-			// }
+			const data = {
+				clerkId: user?.id,
+				text: transcript.text || '',
+				words: transcript.words ? transcript.words.length : 0,
+				duration: transcript.audio_duration || 0,
+				uploadLink: audioUrl,
+			}
 
-			// await createRecord(data)
+			const record = await createRecord(data)
 
-			return { success: true }
+			return { success: true, id: record?.id }
 		} else {
 			return { success: false, error: 'Transcription failed' }
 		}

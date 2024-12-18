@@ -1,16 +1,40 @@
 'use client'
 
+import Record from '@/components/Record'
 import { getRecordById } from '@/lib/records'
 import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+interface Record {
+	id: string
+	userId: string
+	text: string
+	duration: number
+	words: number
+	uploadLink: string
+	createdAt: Date
+}
 
 const RecordPage = () => {
 	const params = useParams<{ id: string }>()
+	const [loading, setLoading] = useState(true)
 
+	const [record, setRecord] = useState<Record | null>(null)
+
+	const fetchRecord = async () => {
+		try {
+			const recordfetch = await getRecordById(params.id)
+			if (recordfetch) {
+				setRecord(recordfetch)
+			}
+		} catch (error) {
+			console.error(error)
+		} finally {
+			setLoading(false)
+		}
+	}
 	useEffect(() => {
-		const fetch = getRecordById(params.id)
-
-		console.log(fetch)
+		fetchRecord()
 	}, [params.id])
 
 	{
@@ -21,10 +45,57 @@ const RecordPage = () => {
 			/> */
 	}
 
+	const timeAgo = (date: Date) => {
+		const now = new Date()
+		const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+		let interval = Math.floor(seconds / 31536000)
+
+		if (interval > 1) {
+			return `${interval} years ago`
+		}
+		interval = Math.floor(seconds / 2592000)
+		if (interval > 1) {
+			return `${interval} months ago`
+		}
+		interval = Math.floor(seconds / 86400)
+		if (interval > 1) {
+			return `${interval} days ago`
+		}
+		interval = Math.floor(seconds / 3600)
+		if (interval > 1) {
+			return `${interval} hours ago`
+		}
+		interval = Math.floor(seconds / 60)
+		if (interval > 1) {
+			return `${interval} minutes ago`
+		}
+		return `just now`
+	}
+
+	if (loading) {
+		return (
+			<div className='flex justify-center items-center h-screen w-screen'>
+				<p className='text-2xl'>Loading...</p>
+			</div>
+		)
+	}
+
+	if (!record) {
+		return (
+			<div className='flex justify-center items-center h-screen w-screen'>
+				<p className='text-2xl'>Record not found</p>
+			</div>
+		)
+	}
+
 	return (
 		<div className='flex justify-center items-center h-screen w-screen'>
-			<h1>Record page</h1>
-			<p>{params.id}</p>
+			<Record
+				text={record?.text}
+				words={record?.words}
+				duration={record?.duration}
+				date={timeAgo(record?.createdAt)}
+			/>
 		</div>
 	)
 }

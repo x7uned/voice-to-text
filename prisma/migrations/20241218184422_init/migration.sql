@@ -11,7 +11,10 @@ CREATE TABLE "User" (
 CREATE TABLE "Record" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
+    "duration" INTEGER NOT NULL,
+    "words" INTEGER NOT NULL,
+    "uploadLink" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Record_pkey" PRIMARY KEY ("id")
