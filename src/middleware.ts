@@ -1,6 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-const isProtectedRoute = createRouteMatcher(['/api/records(.*)'])
+const isProtectedRoute = createRouteMatcher([
+	'/api/records(.*)',
+	'/api/upload/audio(.*)',
+])
 
 export default clerkMiddleware(async (auth, req) => {
 	if (isProtectedRoute(req)) await auth.protect()
