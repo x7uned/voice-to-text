@@ -11,7 +11,7 @@ export async function createUser(data: User) {
 }
 
 export async function deleteUser(id: string) {
-	throw new Error('Not implemented')
+	throw new Error(`Not implemented ${id}`)
 	// try {
 	// 	const fetch = await prisma.user.delete({ where: { clerkId: id } })
 	// 	if (!fetch.id) {
