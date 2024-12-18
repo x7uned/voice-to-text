@@ -10,6 +10,18 @@ export async function createUser(data: User) {
 	}
 }
 
+export async function deleteUser(id: string) {
+	try {
+		const fetch = await prisma.user.delete({ where: { id } })
+		if (!fetch) {
+			throw new Error('User not found')
+		}
+		return { success: true }
+	} catch (error) {
+		return { error }
+	}
+}
+
 export async function getUserById({
 	id,
 	clerkUserId,
