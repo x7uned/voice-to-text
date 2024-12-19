@@ -4,12 +4,6 @@ import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
-export const config = {
-	api: {
-		bodyParser: false, // Отключаем автоматический парсинг тела запроса
-	},
-}
-
 export async function POST(req: NextRequest) {
 	const sig = req.headers.get('stripe-signature') || ''
 	const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
