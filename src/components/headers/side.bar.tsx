@@ -3,8 +3,8 @@
 import {
 	Diamond,
 	DiamondPlus,
-	Gem,
 	GemIcon,
+	Gift,
 	Loader,
 	RotateCcw,
 	Settings,
@@ -40,10 +40,10 @@ const items = [
 		icon: Settings,
 	},
 	{
-		title: 'Upgrade',
-		url: '/upgrade',
-		icon: Gem,
-		gold: true,
+		title: 'Donate to support',
+		url: '/donate',
+		icon: Gift,
+		gold: false,
 	},
 	{
 		title: 'Premium',

@@ -10,6 +10,23 @@ export async function createUser(data: User) {
 	}
 }
 
+export async function canIUpload(clerkId: string) {
+	try {
+		const user = await prisma.user.findUnique({
+			where: { clerkId },
+			include: { records: true },
+		})
+
+		if (!user || (!user.premium && user.records.length >= 2)) {
+			return false
+		}
+
+		return true
+	} catch (error) {
+		return { error }
+	}
+}
+
 export async function deleteUser(id: string) {
 	try {
 		if (!id) {
