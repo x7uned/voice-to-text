@@ -11,6 +11,7 @@ model User {
   id       String    @id @default(cuid())
   email    String    @unique
   clerkId  String    @unique
+  premium  Boolean   @default(false)
   records  Record[]
   payments Payment[]
 }
@@ -27,10 +28,13 @@ model Record {
 }
 
 model Payment {
-  id        String   @id @default(cuid())
-  userId    String
-  amount    Float
-  status    String
-  createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  stripeId    String   @unique
+  userId      String
+  amount      Int
+  currency    String
+  status      String
+  description String?
+  createdAt   DateTime
+  User        User     @relation(fields: [userId], references: [id])
 }

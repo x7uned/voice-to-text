@@ -4,16 +4,19 @@ import { useToast } from '@/hooks/use-toast'
 import { transcribe } from '@/lib/transcribe'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 export default function FileDropZone() {
 	const { toast } = useToast()
 	const router = useRouter()
+	const [loading, setLoading] = useState(false)
 
 	const onFileUpload = useCallback(
 		async (file: File) => {
 			try {
+				setLoading(true)
+
 				const formData = new FormData()
 				formData.append('file', file)
 
@@ -44,6 +47,8 @@ export default function FileDropZone() {
 					description: 'Unable to upload file. Please try again later.',
 					variant: 'destructive',
 				})
+			} finally {
+				setLoading(false)
 			}
 		},
 		[toast]
@@ -88,7 +93,6 @@ export default function FileDropZone() {
 		[onFileUpload, toast]
 	)
 
-	// Настройка useDropzone
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
 		accept: {
@@ -99,6 +103,10 @@ export default function FileDropZone() {
 		maxSize: 5 * 1024 * 1024,
 		multiple: false,
 	})
+
+	if (loading) {
+		return <p>Loading...</p>
+	}
 
 	return (
 		<div

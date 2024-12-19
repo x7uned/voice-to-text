@@ -1,6 +1,6 @@
 'use client'
 
-import { Diamond, DiamondPlus, Gem, Settings } from 'lucide-react'
+import { Diamond, DiamondPlus, Gem, GemIcon, Settings } from 'lucide-react'
 
 import {
 	Sidebar,
@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/sidebar'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { useRecords } from '../contexts/records.context'
 
 const items = [
@@ -37,25 +36,16 @@ const items = [
 		icon: Gem,
 		gold: true,
 	},
+	{
+		title: 'Premium',
+		url: '/premium',
+		icon: GemIcon,
+		gold: true,
+	},
 ]
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
-	const { records, fetchRecords } = useRecords()
-	const [loading, setLoading] = useState(true)
-
-	const fetchingRecords = () => {
-		try {
-			fetchRecords()
-		} catch (error) {
-			console.error('Error fetching records:', error)
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	useEffect(() => {
-		fetchingRecords()
-	}, [])
+	const { records } = useRecords()
 
 	return (
 		<SidebarProvider>
@@ -86,20 +76,17 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{loading ? (
-									<SidebarMenuButton>Loading...</SidebarMenuButton>
-								) : (
-									records.map(item => (
-										<SidebarMenuItem key={item.id}>
-											<SidebarMenuButton asChild>
-												<Link href={`/record/${item.id}`}>
-													<Diamond />
-													<span>{item.text.slice(0, 40)}</span>
-												</Link>
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									))
-								)}
+								{records.map(item => (
+									<SidebarMenuItem key={item.id}>
+										<SidebarMenuButton asChild>
+											<Link href={`/record/${item.id}`}>
+												<Diamond />
+												<span>{item.text.slice(0, 40)}</span>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
+								)
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>

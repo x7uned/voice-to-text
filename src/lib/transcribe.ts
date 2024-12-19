@@ -12,12 +12,8 @@ export const transcribe = async (audioUrl: string) => {
 			throw new Error('User ID is required')
 		}
 
-		// if (!process.env.ASSEMBLYAI_API_KEY) {
-		// 	throw new Error('AssemblyAI API key is required')
-		// }
-
 		const client = new AssemblyAI({
-			apiKey: 'ae6f93af259e45b887ade6c0d7836e99',
+			apiKey: process.env.ASSEMBLYAI_API_KEY || 'notfound',
 		})
 
 		const data = {

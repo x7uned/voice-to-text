@@ -61,7 +61,7 @@ export async function getMyRecords() {
 
 		return { records, success: true }
 	} catch (error) {
-		console.error(error)
+		console.error('Error getting records:', error)
 		throw new Error('Failed to get records')
 	}
 }

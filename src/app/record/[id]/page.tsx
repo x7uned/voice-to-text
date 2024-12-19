@@ -35,7 +35,7 @@ const RecordPage = () => {
 	}
 	useEffect(() => {
 		fetchRecord()
-	}, [params.id])
+	}, [params.id, fetchRecord])
 
 	{
 		/* <Transcribe
