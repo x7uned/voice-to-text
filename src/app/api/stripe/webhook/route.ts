@@ -6,8 +6,6 @@ import Stripe from 'stripe'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: Request) {
-	console.log('Webhook received:', req)
-
 	const sig = headers().get('Stripe-Signature') as string
 
 	let event: Stripe.Event
@@ -28,35 +26,45 @@ export async function POST(req: Request) {
 
 	try {
 		switch (type) {
-			case 'payment_intent.created':
-				await prisma.payment.create({
+			case 'checkout.session.completed': {
+				const session = data.object as Stripe.Checkout.Session
+
+				const userId = session.metadata?.userId
+
+				if (!userId) {
+					console.warn('Missing userId in metadata')
+					return new NextResponse('Metadata Error', { status: 400 })
+				}
+
+				const payment = await prisma.payment.create({
 					data: {
-						stripeId: data.object.id,
-						status: 'created',
-						amount: data.object.amount / 100,
-						currency: data.object.currency,
-						createdAt: new Date(),
-						userId: data.object.metadata?.userId,
+						stripeId: session.id,
+						currency: session.currency!,
+						status: 'paid',
+						createdAt: new Date(session.created * 1000),
+						userId: userId,
+						amount: session.amount_total!,
 					},
 				})
-				break
 
-			case 'payment_intent.succeeded':
-				await prisma.payment.update({
-					where: { stripeId: data.object.id },
-					data: { status: 'succeeded' },
+				if (!payment) {
+					console.error('Payment creation failed')
+					return new NextResponse('Database Error', { status: 500 })
+				}
+
+				if (!userId) {
+					console.warn('Missing userId in metadata')
+					return new NextResponse('Metadata Error', { status: 400 })
+				}
+
+				await prisma.user.update({
+					where: { id: userId },
+					data: { premium: true },
 				})
-				break
 
-			case 'payment_intent.canceled':
-				await prisma.payment.update({
-					where: { stripeId: data.object.id },
-					data: { status: 'canceled' },
-				})
+				console.log(`User ${userId} upgraded to premium`)
 				break
-
-			default:
-				console.warn(`Unhandled event type: ${type}`)
+			}
 		}
 
 		return new NextResponse('Success', { status: 200 })
