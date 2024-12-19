@@ -1,10 +1,34 @@
+'use server'
+
 import prisma from '@/lib/prisma'
+import { currentUser } from '@clerk/nextjs/server'
 import { User } from '@prisma/client'
 
 export async function createUser(data: User) {
 	try {
 		const user = await prisma.user.create({ data })
 		return { user }
+	} catch (error) {
+		return { error }
+	}
+}
+
+export async function doIHavePremium() {
+	try {
+		const userClerk = await currentUser()
+
+		if (!userClerk) {
+			return false
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { clerkId: userClerk.id },
+		})
+
+		if (user?.premium) {
+			return true
+		}
+		return false
 	} catch (error) {
 		return { error }
 	}

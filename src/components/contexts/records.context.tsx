@@ -46,7 +46,7 @@ export const RecordsProvider = ({ children }: { children: ReactNode }) => {
 	}
 
 	useEffect(() => {
-		fetchRecords() // Загружаем записи при монтировании компонента
+		fetchRecords()
 	}, [])
 
 	return (

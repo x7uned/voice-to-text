@@ -1,5 +1,6 @@
 'use client'
 
+import LoadingScreen from '@/components/loading.screen'
 import Record from '@/components/Record'
 import { getRecordById } from '@/lib/records'
 import { useParams } from 'next/navigation'
@@ -37,14 +38,6 @@ const RecordPage = () => {
 		fetchRecord()
 	}, [params.id, fetchRecord])
 
-	{
-		/* <Transcribe
-				words={transcript.words}
-				text={transcript.text}
-				duration={transcript.duration}
-			/> */
-	}
-
 	const timeAgo = (date: Date) => {
 		const now = new Date()
 		const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
@@ -73,11 +66,7 @@ const RecordPage = () => {
 	}
 
 	if (loading) {
-		return (
-			<div className='flex justify-center items-center h-screen w-screen'>
-				<p className='text-2xl'>Loading...</p>
-			</div>
-		)
+		return <LoadingScreen />
 	}
 
 	if (!record) {

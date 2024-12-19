@@ -70,10 +70,10 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 											className={item.gold ? 'text-yellow-500' : ''}
 											asChild
 										>
-											<a href={item.url}>
+											<Link href={item.url}>
 												<item.icon />
 												<span>{item.title}</span>
-											</a>
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								))}

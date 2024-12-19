@@ -105,7 +105,7 @@ export default function FileDropZone() {
 	})
 
 	if (loading) {
-		return <p>Loading...</p>
+		return <div className='loader'></div>
 	}
 
 	return (
