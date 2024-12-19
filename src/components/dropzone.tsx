@@ -51,7 +51,7 @@ export default function FileDropZone() {
 				setLoading(false)
 			}
 		},
-		[toast]
+		[toast, router]
 	)
 
 	// Обработка файла при перетаскивании

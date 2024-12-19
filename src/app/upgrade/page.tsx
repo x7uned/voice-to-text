@@ -7,10 +7,7 @@ import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useState } from 'react'
 
-if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) {
-	throw new Error('NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined')
-}
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY)
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!)
 
 export default function UpgradePage() {
 	const [value, setValue] = useState(1)
