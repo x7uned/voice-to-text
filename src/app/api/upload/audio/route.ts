@@ -23,12 +23,12 @@ export async function POST(req: Request) {
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 	}
 
-	const permission = canIUpload(user.id)
+	const permission = await canIUpload(user.id)
 
 	if (!permission) {
 		return NextResponse.json(
 			{ error: 'You have reached the limit of free uploads' },
-			{ status: 403 }
+			{ status: 412 }
 		)
 	}
 
