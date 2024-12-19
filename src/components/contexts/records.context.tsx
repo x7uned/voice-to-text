@@ -14,6 +14,7 @@ import {
 interface RecordsContextType {
 	records: Record[]
 	fetchRecords: () => void
+	loading: boolean
 }
 
 const RecordsContext = createContext<RecordsContextType | undefined>(undefined)
@@ -28,15 +29,19 @@ export const useRecords = (): RecordsContextType => {
 
 export const RecordsProvider = ({ children }: { children: ReactNode }) => {
 	const [records, setRecords] = useState<Record[]>([])
+	const [loading, setLoading] = useState(false)
 
 	const fetchRecords = async () => {
 		try {
+			setLoading(true)
 			const response = await getMyRecords()
 			if (response.records && response.success) {
 				setRecords(response.records)
 			}
 		} catch (error) {
 			console.error('Error fetching records:', error)
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -45,7 +50,7 @@ export const RecordsProvider = ({ children }: { children: ReactNode }) => {
 	}, [])
 
 	return (
-		<RecordsContext.Provider value={{ records, fetchRecords }}>
+		<RecordsContext.Provider value={{ records, fetchRecords, loading }}>
 			{children}
 		</RecordsContext.Provider>
 	)
