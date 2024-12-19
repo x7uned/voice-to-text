@@ -25,7 +25,6 @@ export default function FileDropZone() {
 
 				if (response.data.blob.url) {
 					const fetch = await transcribe(response.data.blob.url)
-					console.log(fetch)
 					if (fetch?.success) {
 						router.push(`/record/${fetch.id}`)
 					}
