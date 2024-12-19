@@ -4,6 +4,12 @@ import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
+export const config = {
+	api: {
+		bodyParser: false, // Отключаем автоматический парсинг тела запроса
+	},
+}
+
 export async function POST(req: NextRequest) {
 	const sig = req.headers.get('stripe-signature') || ''
 	const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
@@ -11,7 +17,7 @@ export async function POST(req: NextRequest) {
 	let event: Stripe.Event
 
 	try {
-		const body = await req.text()
+		const body = await req.text() // Сохраняем тело в raw-формате
 		event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
 	} catch (err) {
 		console.error('Webhook signature verification failed.', err)
@@ -30,7 +36,7 @@ export async function POST(req: NextRequest) {
 						amount: data.object.amount / 100,
 						currency: data.object.currency,
 						createdAt: new Date(),
-						userId: data.object.metadata.userId,
+						userId: data.object.metadata?.userId,
 					},
 				})
 				break
