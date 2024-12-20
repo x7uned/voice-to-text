@@ -78,7 +78,7 @@ const RecordPage = () => {
 	}
 
 	return (
-		<div className='flex justify-center items-center h-screen w-screen'>
+		<div className='flex justify-center items-center min-h-screen w-screen'>
 			<Record
 				text={record?.text}
 				words={record?.words}
