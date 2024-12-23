@@ -4,6 +4,7 @@ import LoadingScreen from '@/components/loading.screen'
 import { Button } from '@/components/ui/button'
 import HomeCard from '@/components/ui/home.card'
 import { doIHavePremium } from '@/lib/users'
+import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -55,23 +56,32 @@ export default function PreviewPage() {
 
 	return (
 		<div className='flex justify-center items-center w-screen h-screen'>
-			<form onSubmit={handleSubmit}>
-				<section>
-					<HomeCard className='border-[#ffc66486]'>
-						<div className='flex w-full flex-col gap-2 items-center justify-between'>
-							<p className='text-4xl'>PREMIUM</p>
-							<div className='flex flex-col items-center'>
-								<ul className='flex flex-col mt-2 items-start px-8 w-full list-disc'>
-									<li className='text-sectext'>Unlimited Uploads</li>
-									<li className='text-sectext'>Unlimited Voice-to-text</li>
-									<li className='text-sectext'>No AD</li>
-								</ul>
+			<SignedIn>
+				<form onSubmit={handleSubmit}>
+					<section>
+						<HomeCard className='border-[#ffc66486]'>
+							<div className='flex w-full flex-col gap-2 items-center justify-between'>
+								<p className='text-4xl'>PREMIUM</p>
+								<div className='flex flex-col items-center'>
+									<ul className='flex flex-col mt-2 items-start px-8 w-full list-disc'>
+										<li className='text-sectext'>Unlimited Uploads</li>
+										<li className='text-sectext'>Unlimited Voice-to-text</li>
+										<li className='text-sectext'>No AD</li>
+									</ul>
+								</div>
+								<Button>Buy now</Button>
 							</div>
-							<Button>Buy now</Button>
-						</div>
-					</HomeCard>
-				</section>
-			</form>
+						</HomeCard>
+					</section>
+				</form>
+			</SignedIn>
+			<SignedOut>
+				<SignInButton>
+					<Button size='lg' className='flex justify-center text-xl'>
+						Sign in
+					</Button>
+				</SignInButton>
+			</SignedOut>
 		</div>
 	)
 }
