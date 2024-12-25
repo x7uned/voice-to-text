@@ -57,14 +57,12 @@ export async function deleteUser(id: string) {
 			throw new Error('User ID is required')
 		}
 
-		// Поиск пользователя по clerkId
 		const user = await prisma.user.findUnique({ where: { clerkId: id } })
 
 		if (!user) {
 			throw new Error('User not found')
 		}
 
-		// Удаление пользователя по ID
 		await prisma.user.delete({ where: { id: user.id } })
 
 		return { success: true }

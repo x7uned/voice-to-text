@@ -30,10 +30,10 @@ export async function POST(req: NextRequest) {
 		return new NextResponse('User not found', { status: 401 })
 	}
 
-	// Убедитесь, что amount передается в центрах
+	// Ensure that the amount is passed in cents
 	const amountInCents = amount * 100
 
-	// Создаем одноразовый платеж с обязательным параметром unit_amount
+	// Create a one-time payment with the required parameter unit_amount
 	const session = await stripe.checkout.sessions.create({
 		line_items: [
 			{
@@ -42,12 +42,12 @@ export async function POST(req: NextRequest) {
 					product_data: {
 						name: 'Donate',
 					},
-					unit_amount: amountInCents, // Передаем сумму в центрах
+					unit_amount: amountInCents, // Pass the amount in cents
 				},
 				quantity: 1,
 			},
 		],
-		mode: 'payment', // Используем режим "payment" для одноразового взноса
+		mode: 'payment', // Use "payment" mode for a one-time donation
 		success_url: `${process.env.URL}/payment-success?amount=${amount}`,
 		cancel_url: `${process.env.URL}/error`,
 		metadata: {

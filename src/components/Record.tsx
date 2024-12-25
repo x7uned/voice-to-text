@@ -17,7 +17,7 @@ const Record = ({ text, duration, words, date }: RecordProps) => {
 	const [showText, setShowText] = useState(false)
 	const { toast } = useToast()
 
-	// Копирование текста в буфер обмена
+	// Copy text to clipboard
 	const handleCopy = () => {
 		navigator.clipboard.writeText(text)
 		toast({
@@ -26,7 +26,7 @@ const Record = ({ text, duration, words, date }: RecordProps) => {
 		})
 	}
 
-	// Скачивание текста в формате .txt
+	// Download text as .txt file
 	const handleDownload = () => {
 		const blob = new Blob([text], { type: 'text/plain' })
 		const url = URL.createObjectURL(blob)
@@ -34,7 +34,7 @@ const Record = ({ text, duration, words, date }: RecordProps) => {
 		link.href = url
 		link.download = 'transcribed-text.txt'
 		link.click()
-		URL.revokeObjectURL(url) // Освобождаем память
+		URL.revokeObjectURL(url) // Free memory
 	}
 
 	return (

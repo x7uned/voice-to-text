@@ -69,13 +69,13 @@ export default function FileDropZone() {
 		[toast, router]
 	)
 
-	// Обработка файла при перетаскивании
+	// Handle the file on drag-and-drop
 	const onDrop = useCallback(
 		(
 			acceptedFiles: File[],
 			fileRejections: import('react-dropzone').FileRejection[]
 		) => {
-			// Проверка на ошибки
+			// Check for errors
 			if (fileRejections.length > 0) {
 				fileRejections.forEach(file => {
 					file.errors.forEach((err: { code: string; message: string }) => {
@@ -101,7 +101,7 @@ export default function FileDropZone() {
 					})
 				})
 			} else if (acceptedFiles.length === 1) {
-				// Отправка только одного файла
+				// Upload only one file
 				onFileUpload(acceptedFiles[0])
 			}
 		},
@@ -148,7 +148,8 @@ export default function FileDropZone() {
 				<AlertDialogHeader>
 					<AlertDialogTitle>You're over the limit</AlertDialogTitle>
 					<AlertDialogDescription>
-						To do more voice - text you need to buy premium. Do you want it?
+						To do more voice-to-text conversions, you need to buy premium. Do
+						you want to proceed?
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>

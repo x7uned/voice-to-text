@@ -10,7 +10,6 @@ import {
 	useState,
 } from 'react'
 
-// Типы контекста
 interface RecordsContextType {
 	records: Record[]
 	fetchRecords: () => void

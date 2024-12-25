@@ -34,18 +34,18 @@ export async function POST(req: Request) {
 
 	const formData = await req.formData()
 
-	// Извлекаем файл
+	// Extract the file
 	const file = formData.get('file')
 
 	if (!file || !(file instanceof Blob)) {
 		return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
 	}
 
-	// Получаем тип и размер файла
+	// Get file type and size
 	const contentType = file.type
 	const fileSize = file.size
 
-	// Проверяем поддерживаемые форматы
+	// Check supported formats
 	if (!SUPPORTED_FORMATS.includes(contentType)) {
 		return NextResponse.json(
 			{ error: 'Unsupported file format. Supported formats: MP3, WAV, M4A' },
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
 		)
 	}
 
-	// Проверяем размер файла
+	// Check file size
 	if (fileSize > MAX_FILE_SIZE) {
 		return NextResponse.json(
 			{ error: 'File size exceeds the 5MB limit' },
