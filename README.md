@@ -94,22 +94,6 @@ Access the app at `http://localhost:3000`.
 
 ---
 
-## Project Structure
-```
-voice-to-text/
-├── prisma/         # Prisma schema and migrations
-├── public/         # Static assets
-├── src/
-│   ├── components/ # Reusable React components
-│   ├── pages/      # Next.js pages
-│   ├── styles/     # TailwindCSS configuration
-│   └── utils/      # Helper functions and utilities
-├── .env.local      # Environment variables
-└── README.md       # Project documentation
-```
-
----
-
 ## Contributing
 1. Fork the repository.
 2. Create a feature branch:
